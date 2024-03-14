@@ -1,10 +1,17 @@
-import { Route, Routes } from "react-router-dom";
-import { PaymentApp } from "../PaymentApp";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { AuthRoutes } from "../auth/routes/AuthRoutes";
+import { PaymentRoutes } from "../payment/routes/PaymentRoutes";
 
 export const AppRouter = () => {
+    const status = 'authenticated'
     return (
         <Routes>
-            <Route path="/*" element={<PaymentApp />} />
+            {status === "authenticated" ? (
+                <Route path="/*" element={<PaymentRoutes />} />
+            ) : (
+                <Route path="/auth/*" element={<AuthRoutes />} />
+            )}
+            <Route path="/*" element={<Navigate to="/auth/login" />} />
         </Routes>
     );
 };

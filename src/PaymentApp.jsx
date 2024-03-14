@@ -1,13 +1,10 @@
-import { AuthLayout } from "./auth/layout/AuthLayout"
+import { AppRouter } from "./router/AppRouter";
+import { AppTheme } from "./theme";
 
-export const PaymentApp = ()  => {
-
-  return (
-    <>
-      <div>
-        <AuthLayout title="aaa"/>
-      </div>
-    </>
-  )
-}
-
+export const PaymentApp = () => {
+    return (
+        <AppTheme>
+            <AppRouter />
+        </AppTheme>
+    );
+};

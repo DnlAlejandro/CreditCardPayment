@@ -1,15 +1,15 @@
-import { createTheme } from "@mui/material"
+import { createTheme } from "@mui/material";
 
 export const greenTheme = createTheme({
-    palette:{
+    palette: {
         primary: {
-            main: '#262254'
+            main: "#1b4332"
         },
         secondary: {
-            main: '#543884'
+            main: "#2d6a4f"
         },
         error: {
-            main: red.A400
+            main: "#ee6055"
         }
-    }
-})
+    },
+});
