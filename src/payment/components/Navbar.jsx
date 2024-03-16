@@ -1,7 +1,25 @@
-import { LogoutOutlined } from '@mui/icons-material';
-import { AppBar, Grid, IconButton, Toolbar, Typography } from '@mui/material'
+import { LogoutOutlined } from "@mui/icons-material";
+import {
+    AppBar,
+    Grid,
+    IconButton,
+    Toolbar,
+    Typography,
+    useMediaQuery,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { startLogout } from "../../store/auth/thunks";
+import CreditScoreIcon from "@mui/icons-material/CreditScore";
 
 export const Navbar = () => {
+    const dispatch = useDispatch();
+    const { displayName } = useSelector((state) => state.auth);
+    const matches = useMediaQuery("(max-width:400px)");
+
+    const onLogout = () => {
+        dispatch(startLogout());
+    };
+
     return (
         <AppBar
             position="fixed"
@@ -17,17 +35,31 @@ export const Navbar = () => {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <Typography variant="h6" noWrap component="div">
-                        {" "}
-                        PaymentCreditCardApp{" "}
-                    </Typography>
 
-                    <IconButton color="error" onClick={() => console.log('logout')}>
+                    <Typography
+                        variant="subtitle1"
+                        sx={{ fontSize: matches ? "0.75rem" : "1rem" }}
+                    >
+                        {displayName}
+                    </Typography>
+                    {matches ? (
+                        <IconButton color="inherit">
+                            <CreditScoreIcon />{" "}
+                            {/* Icono que se muestra en pantallas pequeñas */}
+                        </IconButton>
+                    ) : (
+                        <Typography variant="h6" noWrap component="div">
+                            PaymentCreditCardApp
+                        </Typography>
+                    )}
+
+                        
+
+                    <IconButton color="error" onClick={onLogout}>
                         <LogoutOutlined />
                     </IconButton>
                 </Grid>
             </Toolbar>
-
         </AppBar>
-    )
-}
+    );
+};

@@ -18,15 +18,16 @@ export const CardProduct = ({ productInfo }) => {
                 sx={{
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "space-around",
+                    justifyContent: "space-between",
                     borderRadius: 2,
                     maxWidth: 345,
-                    height: 450,
+                    height: 400,
                     marginBottom: 2,
+                    padding: 0
                 }}
             >
                 <CardMedia
-                    sx={{ height: 200 }}
+                    sx={{ height: 500, mt: 1, borderRadius: 4 }}
                     image={productInfo.image}
                     title={productInfo.title}
                 />
@@ -36,7 +37,7 @@ export const CardProduct = ({ productInfo }) => {
                         variant="h5"
                         component="div"
                         sx={{
-                            maxHeight: "70px",
+                            height: "70px",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                         }}
@@ -47,7 +48,7 @@ export const CardProduct = ({ productInfo }) => {
                         variant="body2"
                         color="text.secondary"
                         sx={{
-                            maxHeight: "60px",
+                            height: "60px",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             textAlign: "justify",

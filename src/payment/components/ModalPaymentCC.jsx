@@ -3,7 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SummaryPage } from "../pages/";
 
 const style = {
@@ -22,10 +22,10 @@ const style = {
 };
 
 export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
-    const [value, setValue] = useState(null);
-    const [cardType, setCardType] = useState(null);
 
+    const [cardType, setCardType] = useState(null);
     const [openModal, setOpenModal] = useState(false);
+
     const handleOpenModal = () => {
         setOpenModal(true);
     };
@@ -38,20 +38,22 @@ export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
         register,
         handleSubmit,
         control,
-        onChange,
+        watch,
         formState: { errors },
     } = useForm();
 
-    const handleCardNumberChange = (event) => {
-        const number = event.target.value;
-        if (number.startsWith("4")) {
+    const watchNumberCC = watch("creditCard");
+
+    useEffect(() => {
+        if(watchNumberCC?.startsWith('4')) {
             setCardType("visa");
-        } else if (number.startsWith("5")) {
+        } else if(watchNumberCC?.startsWith('5')) {
             setCardType("mastercard");
         } else {
             setCardType(null);
         }
-    };
+        }, [watchNumberCC])
+    
 
     const submitCcData = (data) => {
         data.dateExpiry = data.dateExpiry.format("MM/YYYY");
@@ -124,7 +126,7 @@ export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
                                     type="number"
                                     placeholder="5234 5678 9012 3456"
                                     fullWidth
-                                    onChange={handleCardNumberChange} // Establece la función de manejo aquí
+
                                 />
                                 {errors.creditCard && (
                                     <Alert sx={{ mt: 1 }} severity="error">
@@ -205,12 +207,10 @@ export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
                                     placeholder="Joe Rogan"
                                     fullWidth
                                 />
-                                {errors.nameOnCard?.type === "required" && (
-                                    <>
+                                {errors.nameOnCard && (
                                         <Alert sx={{ mt: 1 }} severity="error">
-                                            Name is required
+                                            {errors.nameOnCard.message}
                                         </Alert>
-                                    </>
                                 )}
                             </Grid>
                             <Grid item xs={12} sx={{ mt: 1 }}>
@@ -223,12 +223,10 @@ export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
                                     placeholder="4332 DRESDEN ST COLUMBUS OH"
                                     fullWidth
                                 />
-                                {errors.adress?.type === "required" && (
-                                    <>
+                                {errors.adress && (
                                         <Alert sx={{ mt: 1 }} severity="error">
-                                            Adress is required
+                                            {errors.adress.message}
                                         </Alert>
-                                    </>
                                 )}
                             </Grid>
                         </Grid>

@@ -3,6 +3,9 @@ import { AuthLayout } from "../layout/AuthLayout";
 import { useForm } from "react-hook-form";
 import { Google } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { checkingAuthentication, startEmailAndPasswordLogin, startGoogleSignIn } from "../../store/auth/thunks";
+import { useMemo } from "react";
 
 export const LoginPage = () => {
     const {
@@ -11,9 +14,20 @@ export const LoginPage = () => {
         formState: { errors },
     } = useForm();
 
+    const {status, errorMessage} = useSelector(state => state.auth);
+    const dispatch = useDispatch();
+    const isAuthenticating = useMemo(() => status === 'checking', [status]);
+    
     const submitLoginData = (data) => {
-        console.log(data)
-    }
+        dispatch(checkingAuthentication());
+        const {email, password} = data;
+        dispatch(startEmailAndPasswordLogin({email, password}));
+    };
+
+    const onGoogleSignIn = () => {
+        console.log('google sign in');
+        dispatch(startGoogleSignIn())
+    };
 
     return (
         <AuthLayout title="Login">
@@ -33,12 +47,12 @@ export const LoginPage = () => {
                             placeholder="email@mail.com"
                             fullWidth
                         />
-                        {errors.email?.type === "required" && (
-                            <>
+                        {errors.email && (
+                            <span>
                                 <Alert sx={{ mt: 1 }} severity="error">
-                                    Email is required
+                                    {errors.email?.message}
                                 </Alert>
-                            </>
+                            </span>
                         )}
                     </Grid>
                     <Grid item xs={12} sx={{ mt: 2 }}>
@@ -63,11 +77,18 @@ export const LoginPage = () => {
                             </span>
                         )}
                     </Grid>
+                    <Grid item xs={12} sx={{ mt: 2, display: !!errorMessage ? "" : 'none'}}>
+                        <span>
+                            <Alert sx={{ mt: 1 }} severity="error">
+                                {errorMessage}
+                            </Alert>
+                        </span>
+                    </Grid>
 
                     <Grid container spacing={2} sx={{ mb: 2, mt: 1 }}>
                         <Grid item xs={12} sm={6}>
                             <Button
-                                // disabled={isAuthenticating}
+                                disabled={isAuthenticating}
                                 type="submit"
                                 variant="contained"
                                 fullWidth
@@ -80,7 +101,7 @@ export const LoginPage = () => {
                                 //disabled={isAuthenticating}
                                 variant="contained"
                                 fullWidth
-                                onClick={()=> {console.log('a')}}
+                                onClick={onGoogleSignIn}
                             >
                                 <Google />
                                 <Typography sx={{ ml: 1 }}>Google</Typography>

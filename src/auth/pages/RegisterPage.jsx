@@ -2,6 +2,9 @@ import { Alert, Button, Grid, Link, TextField, Typography } from "@mui/material"
 import { Link as RouterLink } from "react-router-dom";
 import { AuthLayout } from "../layout/AuthLayout";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useMemo } from "react";
+import { startCreatingUserWithEmailAndPassword } from "../../store/auth/thunks";
 
 export const RegisterPage = () => {
     const {
@@ -10,8 +13,15 @@ export const RegisterPage = () => {
         formState: { errors },
     } = useForm();
 
+    const {status, errorMessage} = useSelector(state => state.auth);
+    const dispatch = useDispatch();
+    const isAuthenticating = useMemo(() => status === 'checking', [status]);
+
     const submitRegisterData = (data) => {
-        console.log(data);
+        data.displayName = data.fullname;
+        delete data.fullname;
+        console.log(data)
+        dispatch(startCreatingUserWithEmailAndPassword(data));
     };
 
     return (
@@ -26,6 +36,11 @@ export const RegisterPage = () => {
                         <TextField
                             {...register("fullname", {
                                 required: "Fullname is required",
+                                minLength: {
+                                    value: 3,
+                                    message:
+                                        "Fullname should have at least 3 characters",
+                                },
                             })}
                             aria-invalid={errors.fullname ? "true" : "false"}
                             label="Fullname"
@@ -33,12 +48,12 @@ export const RegisterPage = () => {
                             placeholder="Demetrius Jhonson"
                             fullWidth
                         />
-                        {errors.fullname?.type === "required" && (
-                            <>
+                        {errors.fullname && (
+                            <span>
                                 <Alert sx={{ mt: 1 }} severity="error">
-                                    Fullname is required
+                                    {errors.fullname?.message}
                                 </Alert>
-                            </>
+                            </span>
                         )}
                     </Grid>
                     <Grid item xs={12} sx={{ mt: 2 }}>
@@ -52,12 +67,12 @@ export const RegisterPage = () => {
                             placeholder="email@mail.com"
                             fullWidth
                         />
-                        {errors.email?.type === "required" && (
-                            <>
+                        {errors.email && (
+                            <span>
                                 <Alert sx={{ mt: 1 }} severity="error">
-                                    Email is required
+                                    {errors.email?.message}
                                 </Alert>
-                            </>
+                            </span>
                         )}
                     </Grid>
                     <Grid item xs={12} sx={{ mt: 2 }}>
@@ -83,10 +98,17 @@ export const RegisterPage = () => {
                             </span>
                         )}
                     </Grid>
+                    <Grid item xs={12} sx={{ mt: 2, display: !!errorMessage ? "" : 'none'}}>
+                        <span>
+                            <Alert sx={{ mt: 1 }} severity="error">
+                                {errorMessage}
+                            </Alert>
+                        </span>
+                    </Grid>
                     <Grid container spacing={2} sx={{ mb: 2, mt: 1 }}>
                         <Grid item xs={12}>
                             <Button
-                                //disabled={isCheckingAuthentication}
+                                disabled={isAuthenticating}
                                 type="submit"
                                 variant="contained"
                                 fullWidth
@@ -107,6 +129,7 @@ export const RegisterPage = () => {
                             Log in
                         </Link>
                     </Grid>
+
                 </Grid>
             </form>
         </AuthLayout>
