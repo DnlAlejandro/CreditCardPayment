@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { SummaryPage } from "../pages/";
 import { useDispatch, useSelector } from "react-redux";
 import { startSaving } from "../../store/payment/thunks";
+import dayjs from "dayjs";
 
 const style = {
     position: "absolute",
@@ -24,6 +25,7 @@ const style = {
 };
 
 export const ModalPaymentCC = ({ handleClose, handleOpen, productInfo }) => {
+
     const [openSubModal, setOpenSubModal] = useState(false);
     const handleOpenSubModal = () => {
         setOpenSubModal(true);
@@ -44,10 +46,35 @@ export const ModalPaymentCC = ({ handleClose, handleOpen, productInfo }) => {
         handleSubmit,
         control,
         watch,
+        setValue,
         formState: { errors },
     } = useForm();
 
+    const watchFields = watch();
+
     const watchNumberCC = watch("creditCard");
+
+    const formKey = `formData-${productInfo.id}`;
+
+    useEffect(() => {
+        const savedData = localStorage.getItem(formKey);
+        if (savedData) {
+            const formData = JSON.parse(savedData);
+            Object.keys(formData).forEach(key => {
+                const value = formData[key];
+                if (key === 'dateExpiry') {
+                    setValue(key, dayjs(value));
+                } else {
+                    setValue(key, value);
+                }
+            });
+        }
+    }, [formKey, setValue]);
+
+    useEffect(() => {
+        const watchFields = watch();
+        localStorage.setItem(formKey, JSON.stringify(watchFields));
+    }, [watch(), formKey]);
 
     useEffect(() => {
         if (watchNumberCC?.startsWith("4")) {
@@ -196,6 +223,7 @@ export const ModalPaymentCC = ({ handleClose, handleOpen, productInfo }) => {
                                                 <DatePicker
                                                     views={["year", "month"]}
                                                     label="Expiry date"
+                                                    disablePast={true}
                                                     {...field}
                                                     slotProps={{
                                                         textField: {
