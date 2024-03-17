@@ -3,8 +3,10 @@ import { Controller, useForm } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SummaryPage } from "../pages/";
+import { useDispatch, useSelector } from "react-redux";
+import { startSaving } from "../../store/payment/thunks";
 
 const style = {
     position: "absolute",
@@ -21,18 +23,21 @@ const style = {
     overflow: "auto",
 };
 
-export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
+export const ModalPaymentCC = ({ handleClose, handleOpen, productInfo }) => {
+    const [openSubModal, setOpenSubModal] = useState(false);
+    const handleOpenSubModal = () => {
+        setOpenSubModal(true);
+    };
+
+    const handleCloseSubModal = () => {
+        setOpenSubModal(false);
+    };
 
     const [cardType, setCardType] = useState(null);
-    const [openModal, setOpenModal] = useState(false);
+    const dispatch = useDispatch();
 
-    const handleOpenModal = () => {
-        setOpenModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setOpenModal(false);
-    };
+    const { status: statusPay } = useSelector((state) => state.payment);
+    const isCheckingPay = useMemo(() => statusPay === "checking", [statusPay]);
 
     const {
         register,
@@ -45,20 +50,32 @@ export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
     const watchNumberCC = watch("creditCard");
 
     useEffect(() => {
-        if(watchNumberCC?.startsWith('4')) {
+        if (watchNumberCC?.startsWith("4")) {
             setCardType("visa");
-        } else if(watchNumberCC?.startsWith('5')) {
+        } else if (watchNumberCC?.startsWith("5")) {
             setCardType("mastercard");
         } else {
             setCardType(null);
         }
-        }, [watchNumberCC])
-    
+    }, [watchNumberCC]);
 
-    const submitCcData = (data) => {
+    const submitCcData = (data, productInfo) => {
         data.dateExpiry = data.dateExpiry.format("MM/YYYY");
-        console.log(data);
+        const { price, title, id } = productInfo;
+        const { creditCard, cvc, dateExpiry, nameOnCard, adress } = data;
+
+        dispatch(
+            startSaving({ price, title, id, creditCard, cvc, dateExpiry, nameOnCard, adress })
+        )
+            .then(() => {
+                handleClose();
+                handleOpenSubModal();
+            })
+            .catch((error) => {
+                console.error("Payment error:", error);
+            });
     };
+
     return (
         <>
             <Modal
@@ -80,7 +97,7 @@ export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
                     </Typography>
                     <form
                         onSubmit={handleSubmit((data) => {
-                            submitCcData(data);
+                            submitCcData(data, productInfo);
                         })}
                     >
                         <Grid container>
@@ -126,7 +143,6 @@ export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
                                     type="number"
                                     placeholder="5234 5678 9012 3456"
                                     fullWidth
-
                                 />
                                 {errors.creditCard && (
                                     <Alert sx={{ mt: 1 }} severity="error">
@@ -208,9 +224,9 @@ export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
                                     fullWidth
                                 />
                                 {errors.nameOnCard && (
-                                        <Alert sx={{ mt: 1 }} severity="error">
-                                            {errors.nameOnCard.message}
-                                        </Alert>
+                                    <Alert sx={{ mt: 1 }} severity="error">
+                                        {errors.nameOnCard.message}
+                                    </Alert>
                                 )}
                             </Grid>
                             <Grid item xs={12} sx={{ mt: 1 }}>
@@ -224,9 +240,9 @@ export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
                                     fullWidth
                                 />
                                 {errors.adress && (
-                                        <Alert sx={{ mt: 1 }} severity="error">
-                                            {errors.adress.message}
-                                        </Alert>
+                                    <Alert sx={{ mt: 1 }} severity="error">
+                                        {errors.adress.message}
+                                    </Alert>
                                 )}
                             </Grid>
                         </Grid>
@@ -235,6 +251,7 @@ export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
                             variant="contained"
                             type="submit"
                             size="small"
+                            disabled={isCheckingPay}
                             sx={{
                                 mt: 1,
                                 width: "100%",
@@ -248,8 +265,8 @@ export const ModalPaymentCC = ({ handleClose, handleOpen }) => {
                 </Box>
             </Modal>
             <SummaryPage
-                handleOpen={openModal}
-                handleClose={handleCloseModal}
+                handleOpen={openSubModal}
+                handleClose={handleCloseSubModal}
             />
         </>
     );

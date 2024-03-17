@@ -11,7 +11,6 @@ export const PaymentLayout = ({ children }) => {
         const fetchData = async () => {
             try {
                 const productsData = await getProducts();
-                console.log(productsData);
                 setProducts(productsData);
             } catch (error) {
                 console.error("Error fetching products", error);

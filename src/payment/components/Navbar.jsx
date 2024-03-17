@@ -35,11 +35,10 @@ export const Navbar = () => {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-
                     <Typography
                         variant="subtitle1"
                         sx={{ fontSize: matches ? "0.75rem" : "1rem" }}
-                    >
+                        >
                         {displayName}
                     </Typography>
                     {matches ? (

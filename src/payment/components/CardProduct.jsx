@@ -23,11 +23,13 @@ export const CardProduct = ({ productInfo }) => {
                     maxWidth: 345,
                     height: 400,
                     marginBottom: 2,
-                    padding: 0
+                    padding: 0,
+                    backgroundColor: '#e6eef2'
+                
                 }}
             >
                 <CardMedia
-                    sx={{ height: 500, mt: 1, borderRadius: 4 }}
+                    sx={{ height: 500, mt: 1, mx: 1, borderRadius: 4 }}
                     image={productInfo.image}
                     title={productInfo.title}
                 />
@@ -36,6 +38,7 @@ export const CardProduct = ({ productInfo }) => {
                         gutterBottom
                         variant="h5"
                         component="div"
+                        textAlign= 'center'
                         sx={{
                             height: "70px",
                             overflow: "hidden",
@@ -83,6 +86,7 @@ export const CardProduct = ({ productInfo }) => {
             <ModalPaymentCC
                 handleOpen={openModal}
                 handleClose={handleCloseModal}
+                productInfo={productInfo} 
             />
         </>
     );
