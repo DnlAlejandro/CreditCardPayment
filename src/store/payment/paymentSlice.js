@@ -42,7 +42,7 @@ export const paymentSlice = createSlice({
             state.dateExpiry = null;
             state.nameOnCard = null;
             state.adress = null;
-            state.message = payload.message;
+            state.message = payload?.message;
         },
     },
 });

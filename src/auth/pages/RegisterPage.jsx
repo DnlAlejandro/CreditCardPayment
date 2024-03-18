@@ -110,6 +110,7 @@ export const RegisterPage = () => {
                             <Button
                                 disabled={isAuthenticating}
                                 type="submit"
+                                aria-label="btn-register"
                                 variant="contained"
                                 fullWidth
                             >

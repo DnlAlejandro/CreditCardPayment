@@ -32,6 +32,7 @@ export const CardProduct = ({ productInfo }) => {
                     sx={{ height: 500, mt: 1, mx: 1, borderRadius: 4 }}
                     image={productInfo.image}
                     title={productInfo.title}
+                    alt={productInfo.title}
                 />
                 <CardContent>
                     <Typography

@@ -44,7 +44,6 @@ export const Navbar = () => {
                     {matches ? (
                         <IconButton color="inherit">
                             <CreditScoreIcon />{" "}
-                            {/* Icono que se muestra en pantallas pequeñas */}
                         </IconButton>
                     ) : (
                         <Typography variant="h6" noWrap component="div">
@@ -54,7 +53,7 @@ export const Navbar = () => {
 
                         
 
-                    <IconButton color="error" onClick={onLogout}>
+                    <IconButton color="error" onClick={onLogout} aria-label="btn-logout">
                         <LogoutOutlined />
                     </IconButton>
                 </Grid>

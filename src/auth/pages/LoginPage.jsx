@@ -25,7 +25,6 @@ export const LoginPage = () => {
     };
 
     const onGoogleSignIn = () => {
-        console.log('google sign in');
         dispatch(startGoogleSignIn())
     };
 
@@ -44,6 +43,7 @@ export const LoginPage = () => {
                             })}
                             label="Email"
                             type="email"
+                            name="email"
                             placeholder="email@mail.com"
                             fullWidth
                         />
@@ -66,6 +66,7 @@ export const LoginPage = () => {
                                 },
                             })}
                             label="Password"
+                            name="password"
                             type="password"
                             fullWidth
                         />
@@ -91,6 +92,7 @@ export const LoginPage = () => {
                                 disabled={isAuthenticating}
                                 type="submit"
                                 variant="contained"
+                                aria-label="login-btn"
                                 fullWidth
                             >
                                 Login
@@ -98,9 +100,11 @@ export const LoginPage = () => {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Button
-                                //disabled={isAuthenticating}
+                                disabled={isAuthenticating}
                                 variant="contained"
                                 fullWidth
+                                aria-label="google-btn"
+                                name="login"
                                 onClick={onGoogleSignIn}
                             >
                                 <Google />
